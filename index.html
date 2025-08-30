@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE UNFOUND COIN</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Space+Mono:wght@400;700&display=swap');
+        
+        :root {
+            --bg: #ffffff;
+            --text: #000000;
+            --accent: #8a6d3b;
+            --border: #2a2a2a;
+            --hover: #3a3a3a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: var();
+            color: var(--text);
+  font-family: "Arvo", serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .logo {
+            width: 570px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: 0.1rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 1px;
+            background: var(--accent);
+            margin: 1.5rem auto;
+        }
+        
+        .subtitle {
+  font-family: "Arvo", serif;
+  font-weight: 700;
+  font-style: italic;
+            font-size: 1rem;
+            letter-spacing: 0.3rem;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+        }
+        
+        .options {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .btn {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 1rem 2.5rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            border-color: var(--accent);
+            background: rgba(138, 109, 59, 0.05);
+        }
+        
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(138, 109, 59, 0.1), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        /* Response screens */
+        .response-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+        }
+        
+        .response-screen.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .response-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .input-field {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.8rem 1rem;
+            font-family: 'Space Mono', monospace;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 1.5rem;
+            transition: border 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            opacity: 1;
+        }
+        
+        /* Map screen */
+        .map-container {
+            width: 100%;
+            height: 70vh;
+            position: relative;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        
+        .map-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                linear-gradient(rgba(138, 109, 59, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(138, 109, 59, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            transform: rotate(5deg);
+        }
+        
+        .map-marker {
+            position: absolute;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        
+        .map-marker:hover {
+            opacity: 1;
+        }
+        
+        .marker-1 { top: 15%; left: 25%; }
+        .marker-2 { top: 40%; left: 70%; }
+        .marker-3 { top: 75%; left: 30%; }
+        .marker-4 { top: 60%; left: 80%; }
+        
+        .void-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 5s infinite alternate;
+        }
+        
+        .void-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            text-align: center;
+            max-width: 80px;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+        
+        /* Wallet section */
+        .wallet-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .wallet-btn {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 0.8rem 2rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .wallet-btn:hover {
+            background: rgba(138, 109, 59, 0.1);
+        }
+        
+        .twitter-link {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text);
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .twitter-link:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        
+        /* Background elements */
+        .bg-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.1;
+        }
+        
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid var(--accent);
+        }
+        
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+        }
+        
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -50px;
+            right: -50px;
+        }
+    </style>
+</head>
+<link href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+
+<body>
+    <div class="bg-elements">
+        <div class="bg-circle circle-1"></div>
+        <div class="bg-circle circle-2"></div>
+    </div>
+    
+    <div class="container">
+        <img src="Latina.png" alt="The Missing Coin" class="logo">
+        <h1>UNFOUND COIN</h1>
+        <p class="subtitle">Have you seen it?</p>
+        
+        <div class="options">
+            <button class="btn" id="yes-btn">Yes</button>
+            <button class="btn" id="no-btn">No</button>
+        </div>
+        
+        <div class="wallet-section">
+            <p class="subtitle">Please let us know... we are kinda preoccupied</p>
+            <button class="wallet-btn" id="connect-btn">Connect Wallet</button>
+        </div>
+    </div>
+    
+    <a href="https://x.com/Unfound_Coin" class="twitter-link" target="_blank">Follow @UnfoundCoin</a>
+    
+    <!-- Yes response screen -->
+    <div class="response-screen" id="yes-screen">
+        <button class="back-btn" id="back-from-yes">← Back</button>
+        <p class="response-text">Then where is it?</p>
+        <input type="text" class="input-field" id="coin-location" placeholder="Enter coordinates, link, or address...">
+        <p class="response-text" id="validation-response"></p>
+        <p class="response-text" id="final-response">You never saw it. You only saw its reflection.</p>
+    </div>
+    
+    <!-- No response screen -->
+    <div class="response-screen" id="no-screen">
+        <button class="back-btn" id="back-from-no">← Back</button>
+        <div class="map-container">
+            <div class="map-grid"></div>
+            <div class="map-marker marker-1">Last seen in /coinland</div>
+            <div class="map-marker marker-2">Price: undefined</div>
+            <div class="map-marker marker-3">Contract burned before birth</div>
+            <div class="map-marker marker-4">Total supply: ∅</div>
+            <div class="void-circle">
+                <p class="void-text">Find it. You become it.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM elements
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const yesScreen = document.getElementById('yes-screen');
+        const noScreen = document.getElementById('no-screen');
+        const backFromYes = document.getElementById('back-from-yes');
+        const backFromNo = document.getElementById('back-from-no');
+        const coinLocation = document.getElementById('coin-location');
+        const validationResponse = document.getElementById('validation-response');
+        const finalResponse = document.getElementById('final-response');
+        const connectBtn = document.getElementById('connect-btn');
+        
+        // Initially hide final response
+        finalResponse.style.display = 'none';
+        
+        // Event listeners
+        yesBtn.addEventListener('click', () => {
+            yesScreen.classList.add('active');
+        });
+        
+        noBtn.addEventListener('click', () => {
+            noScreen.classList.add('active');
+        });
+        
+        backFromYes.addEventListener('click', () => {
+            yesScreen.classList.remove('active');
+            coinLocation.value = '';
+            validationResponse.textContent = '';
+            finalResponse.style.display = 'none';
+        });
+        
+        backFromNo.addEventListener('click', () => {
+            noScreen.classList.remove('active');
+        });
+        
+        coinLocation.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                validateInput(coinLocation.value);
+            }
+        });
+        
+        // Phantom Wallet Connection
+        connectBtn.addEventListener('click', async () => {
+            try {
+                if (window.solana && window.solana.isPhantom) {
+                    const response = await window.solana.connect();
+                    const publicKey = response.publicKey.toString();
+                    alert(`Wallet connected: ${publicKey.slice(0, 4)}...${publicKey.slice(-4)}`);
+                } else {
+                    alert('Phantom Wallet not found! Please install it from https://phantom.app/');
+                }
+            } catch (err) {
+                console.error('Connection error:', err);
+                alert('Connection refused. You were not meant to find it.');
+            }
+        });
+        
+        // Input validation logic
+        function validateInput(input) {
+            // Hide final response initially
+            finalResponse.style.display = 'none';
+            
+            // Check for Solscan link pattern
+            if (input.includes('solscan.io') || input.includes('etherscan.io')) {
+                validationResponse.textContent = '404. That\'s a copy.';
+                setTimeout(() => {
+                    finalResponse.style.display = 'block';
+                }, 1500);
+                return;
+            }
+            
+            // Check for wallet address pattern (simplified check)
+            if (input.length >= 30 && (input.startsWith('0x') || input.length === 44)) {
+                validationResponse.textContent = 'You\'re not the One.';
+                setTimeout(() => {
+                    finalResponse.style.display = 'block';
+                }, 1500);
+                return;
+            }
+            
+            // Default response for other inputs
+            validationResponse.textContent = 'That\'s not where it went missing.';
+            setTimeout(() => {
+                finalResponse.style.display = 'block';
+            }, 1500);
+        }
+        
+        // Map cursor effect
+        const mapContainer = document.querySelector('.map-container');
+        if (mapContainer) {
+            mapContainer.addEventListener('mousemove', (e) => {
+                const x = e.clientX;
+                const y = e.clientY;
+                
+                // Create light effect (would be more sophisticated in production)
+                mapContainer.style.boxShadow = `
+                    inset ${x - mapContainer.offsetLeft - 50}px ${y - mapContainer.offsetTop - 50}px 100px rgba(138, 109, 59, 0.05)
+                `;
+            });
+            
+            mapContainer.addEventListener('mouseleave', () => {
+                mapContainer.style.boxShadow = 'none';
+            });
+        }
+    </script>
+</body>
+</html>
